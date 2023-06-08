@@ -5,13 +5,11 @@ import css from './App.module.css';
 import Form from '../Form/Form';
 import { ContactsList } from '../ContactsList/ContactsList';
 import { Filter } from '../Filter/Filter';
-import Modal from '../Modal/Modal';
 
 class App extends React.Component {
   state = {
     contacts: [],
     filter: '',
-    showModal: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -19,7 +17,6 @@ class App extends React.Component {
     // console.log(this.state);
 
     if (this.state !== prevState.contacts) {
-    
       localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
     }
   }
@@ -60,14 +57,8 @@ class App extends React.Component {
     this.setState({ filter: evt.currentTarget.value });
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-  };
-
   render() {
-    const { contacts, showModal } = this.state;
+    const { contacts } = this.state;
     const normalizeFilter = this.state.filter.toLowerCase();
     const visibleContacts = this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizeFilter)
@@ -75,17 +66,6 @@ class App extends React.Component {
 
     return (
       <div className={css.container}>
-        <button type="button" onClick={this.toggleModal}>
-          Open Modal
-        </button>
-        {showModal && (
-          <Modal onCloseModal={this.toggleModal}>
-            <button type="button" onClick={this.toggleModal}>
-              Close
-            </button>
-            <h1>Hello Modal</h1>
-          </Modal>
-        )}
         <h1 className={css.phonebookTitle}>
           Phone<span className={css.titlePart}>book</span>
         </h1>
