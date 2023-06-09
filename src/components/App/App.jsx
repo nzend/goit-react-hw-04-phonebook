@@ -5,28 +5,11 @@ import css from './App.module.css';
 import Form from '../Form/Form';
 import { ContactsList } from '../ContactsList/ContactsList';
 import { Filter } from '../Filter/Filter';
-
 class App extends React.Component {
   state = {
     contacts: [],
     filter: '',
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    // console.log(prevState);
-    // console.log(this.state);
-
-    if (this.state !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
 
   addContact = ({ name, number }) => {
     const contact = { id: shortid.generate(), name, number };
@@ -56,6 +39,22 @@ class App extends React.Component {
   changeFilter = evt => {
     this.setState({ filter: evt.currentTarget.value });
   };
+  componentDidUpdate(prevProps, prevState) {
+    // console.log(prevState);
+    // console.log(this.state);
+
+    if (this.state !== prevState.contacts) {
+      console.log('Оновилися контакти');
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
 
   render() {
     const { contacts } = this.state;
@@ -70,12 +69,22 @@ class App extends React.Component {
           Phone<span className={css.titlePart}>book</span>
         </h1>
         <Form contacts={contacts} onSubmit={this.addContact}></Form>
-        <h2 className={css.contactsTitle}>Contacts</h2>
-        <Filter filter={this.state.filter} onChangefilter={this.changeFilter} />
-        <ContactsList
-          contacts={visibleContacts}
-          onDeleteContact={this.deleteContact}
-        ></ContactsList>
+
+        {this.state.contacts.length !== 0 ? (
+          <>
+            <h2 className={css.contactsTitle}>Contacts</h2>
+            <Filter
+              filter={this.state.filter}
+              onChangefilter={this.changeFilter}
+            />
+            <ContactsList
+              contacts={visibleContacts}
+              onDeleteContact={this.deleteContact}
+            ></ContactsList>
+          </>
+        ) : (
+          <p className={css.empty__notification}>The contact list is empty</p>
+        )}
       </div>
     );
   }
